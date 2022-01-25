@@ -5,7 +5,7 @@ const router = express.Router();
 
 // DB없이 메모리로 서버 구성하는 version
 
-const tweets = [
+let tweets = [
   {
     postId: '1',
     text: '화이팅!',
@@ -41,16 +41,26 @@ router.get('/', (req, res) => {
   // res.status(200).send(data); 차이???
 });
 
+//특정 트윗 찾기
+router.get('/:postId', (req, res) => {
+  const postId = req.params.postId;
+  const find = tweets.find((t) => t === postId);
+  if (find) res.status(200).json(find);
+  else res.status(404).json({ message: `Tweet id(${postId}) not found!` });
+});
+
 //트윗 작성
 router.post('/', (req, res) => {
-  // const tweet = {
-  //   id: Date.now(),
-  //   createdAt: new Date(),
-  //   name: 'Ellie',
-  //   username: 'ellie',
-  //   text,
-  // };
-  tweets.push(req.body);
+  const { text, id, nickName, url } = req.body;
+  const tweet = {
+    postId: '4',
+    text,
+    createdAt: new Date(),
+    nickName,
+    id,
+    url,
+  };
+  tweets = [tweet, ...tweets];
   res.status(201).json(tweets);
 });
 
@@ -58,17 +68,21 @@ router.post('/', (req, res) => {
 router.put('/:postId', (req, res) => {
   const postId = req.params.postId;
   //tweets에 해당 postId가 있다면 수정해야함
-  const find = tweets.filter((t) => t.postId === postId);
-  find[0].text = req.body.text;
-  res.status(201).json(tweets);
+  const tweet = tweets.find((t) => t.postId === postId);
+  console.log(tweet);
+  if (tweet) {
+    tweet.text = req.body.text;
+    res.status(200).json(tweets);
+  } else {
+    res.status(404).json({ message: `Tweet id(${postId}) not found!` });
+  }
 });
 
 //트윗 삭제
 router.delete('/:postId', (req, res) => {
   const postId = req.params.postId;
-  console.log(postId);
-  const findArr = tweets.filter((t) => t.postId !== postId);
-  res.status(201).json(findArr);
+  tweets = tweets.filter((t) => t.postId !== postId);
+  res.sendStatus(204);
 });
 
 export default router;
