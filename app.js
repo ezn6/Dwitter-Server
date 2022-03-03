@@ -17,7 +17,6 @@ app.use('/posts', postRouter);
 
 app.use((req, res, next) => {
   res.sendStatus(404);
-  // res.status(404); ??
 });
 
 app.use((error, req, res, next) => {
