@@ -3,8 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import 'express-async-errors';
-
-import postRouter from './router/post.js';
+import postRouter from './router/tweets.js';
+import authRouther from './router/auth.js';
 
 const app = express();
 
@@ -13,7 +13,8 @@ app.use(helmet());
 app.use(morgan('tiny'));
 app.use(cors());
 
-app.use('/posts', postRouter);
+app.use('/tweets', postRouter);
+app.use('/auth', authRouther);
 
 app.use((req, res, next) => {
   res.sendStatus(404);
