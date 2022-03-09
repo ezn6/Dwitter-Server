@@ -3,6 +3,7 @@ import 'express-async-errors';
 import { body } from 'express-validator';
 import * as tweetController from '../controller/tweets.js';
 import { validate } from '../middleware/validator.js';
+import { isAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -17,18 +18,18 @@ const validateTweet = [
 ];
 
 //전체 트윗 조회 api + 특정 유저 트윗 조회
-router.get('/', tweetController.getTweets);
+router.get('/', isAuth, tweetController.getTweets);
 
 //특정 트윗 찾기
-router.get('/:id', tweetController.getTweet);
+router.get('/:id', isAuth, tweetController.getTweet);
 
 //트윗 작성
-router.post('/', validateTweet, tweetController.createTweet);
+router.post('/', isAuth, validateTweet, tweetController.createTweet);
 
 //트윗 수정
-router.put('/:id', validateTweet, tweetController.updateTweet);
+router.put('/:id', isAuth, validateTweet, tweetController.updateTweet);
 
 //트윗 삭제
-router.delete('/:id', tweetController.removeTweet);
+router.delete('/:id', isAuth, tweetController.removeTweet);
 
 export default router;
