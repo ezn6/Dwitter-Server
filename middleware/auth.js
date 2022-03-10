@@ -22,7 +22,7 @@ export const isAuth = async (req, res, next) => {
       }
 
       // console.log(decoded);
-      // 유효한 토큰임이 검증되면 토큰내부의 userId정보로 DB에서 사용자 정보를 끌어온다.
+      // 유효한 토큰임이 검증되면 payload정보를 통해 userId정보로 DB에서 사용자 정보를 끌어온다.
       const user = await userDB.findById(decoded.userId);
 
       if (!user) {
