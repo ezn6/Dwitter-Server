@@ -5,8 +5,9 @@ import * as userDB from '../data/auth.js';
 
 //TODO: Make it secure
 const jwtSecretKey = 'ppMWFaXXaf9djP2Z*euoL9JBl^nLedBI';
-const jwtExpiresInDays = '2d';
+const jwtExpiresInDays = '7d';
 const bcryptSaltRounds = 10;
+
 function CreatJwtToken(userId) {
   return jwt.sign(
     {
@@ -30,6 +31,7 @@ export async function signUp(req, res) {
 
   //db에 모든 body값들 저장하는 로직=> 고유한 userId로 받음
   const userId = await userDB.createUser(
+    //createUser함수는 return user.userId
     username,
     hashedPassword,
     name,
@@ -39,7 +41,7 @@ export async function signUp(req, res) {
 
   const token = CreatJwtToken(userId);
 
-  res.status(201).json({ username: username, jwt: token });
+  res.status(201).json({ username: username, token: token });
 }
 
 //로그인
@@ -58,7 +60,7 @@ export async function login(req, res) {
   //서버에 등록된 유효한 사용자라면 jwt 제공
   const token = CreatJwtToken(findUser.userId);
   // res.status(200).json({ username: `${username}`, jwt: `${token}` });
-  res.status(200).json({ username: username, jwt: token });
+  res.status(200).json({ username: username, token: token });
 }
 
 //Me
@@ -67,5 +69,5 @@ export async function me(req, res) {
   if (!user) {
     return res.status(404).json({ message: 'user not found' });
   }
-  res.status(200).json({ jwt: req.token, username: user.username });
+  res.status(200).json({ token: req.token, username: user.username });
 }
