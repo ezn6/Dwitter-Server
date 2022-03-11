@@ -33,29 +33,37 @@ export async function getAll() {
 }
 
 export async function getAllByUsername(username) {
-  return tweets.filter((t) => t.username === username);
+  return getAll().then((tweets) =>
+    tweets.filter((t) => t.username === username)
+  );
 }
 
 export async function findById(id) {
-  return tweets.find((t) => t.id === id);
+  //해당 postId에 따른 트윗 글 한개만 보여짐
+
+  const found = tweets.find((t) => t.id === id);
+  if (!found) {
+    return null;
+  }
+  const { username, name, url } = await userDB.findById(found.userId);
+  return { ...found, username, name, url };
 }
 
-export async function create(text, name, username) {
+export async function create(text, userId) {
   const tweet = {
     id: Date.now().toString(),
     text,
     createdAt: new Date(),
-    name,
-    username,
+    userId,
   };
   tweets = [tweet, ...tweets];
-  return tweet;
+  return findById(tweet.id); //만들고 나서 사용자에게는 url, name과같은 정보를 보여줘야하니까 findById함수로 리턴
 }
 
 export async function update(id, text) {
   const tweet = tweets.find((t) => t.id === id);
   if (tweet) tweet.text = text;
-  return tweet;
+  return findById(tweet.id);
 }
 
 export async function remove(id) {
