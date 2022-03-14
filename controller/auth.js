@@ -2,19 +2,15 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import 'express-async-errors';
 import * as userDB from '../data/auth.js';
-
-//TODO: Make it secure
-const jwtSecretKey = 'ppMWFaXXaf9djP2Z*euoL9JBl^nLedBI';
-const jwtExpiresInDays = '7d';
-const bcryptSaltRounds = 10;
+import { config } from '../config.js';
 
 function CreatJwtToken(userId) {
   return jwt.sign(
     {
       userId: userId,
     },
-    jwtSecretKey,
-    { expiresIn: jwtExpiresInDays }
+    config.jwt.secretKey,
+    { expiresIn: config.jwt.expiresInSec }
   );
 }
 
@@ -27,7 +23,7 @@ export async function signUp(req, res) {
   }
 
   // pw를 bcrypt -> jwt token생성
-  const hashedPassword = await bcrypt.hash(password, bcryptSaltRounds);
+  const hashedPassword = await bcrypt.hash(password, config.bcrypt.saltRounds);
 
   //db에 모든 body값들 저장하는 로직=> 고유한 userId로 받음
   const userId = await userDB.createUser(
