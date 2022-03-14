@@ -1,4 +1,5 @@
 // import 'express-async-errors';
+import { getSocketIO } from '../connection/socket.js';
 import * as tweetDB from '../data/tweets.js';
 
 export async function getTweets(req, res) {
@@ -23,6 +24,7 @@ export async function createTweet(req, res) {
   const { text } = req.body;
   const tweet = await tweetDB.create(text, req.userId); //userId는 미들웨어에서 req객체에 추가했음
   res.status(201).json(tweet);
+  getSocketIO().emit('tweets', tweet);
 }
 
 export async function updateTweet(req, res) {
