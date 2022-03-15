@@ -1,7 +1,8 @@
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
-import { config } from '../config';
+import { config } from '../config.js';
 
+//Socket 클래스는 socket.io서버 준비하고, 토큰가져오고 에러처리하고, connection열어주는 클래스
 class Socket {
   constructor(server) {
     this.io = new Server(server, {
@@ -10,6 +11,7 @@ class Socket {
       },
     });
 
+    //토큰을 가져오고, 에러처리
     this.io.use((socket, next) => {
       const token = socket.handshake.auth.token;
       if (!token) {
@@ -36,6 +38,7 @@ export function initSocket(server) {
   }
   //socket이 이미 있다면 새롭게 만들어주지 않아도 된다
 }
+
 export function getSocketIO() {
   if (!socket) {
     throw new Error('Please call init first');

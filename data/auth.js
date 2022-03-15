@@ -7,6 +7,14 @@ let users = [
     email: 'bob@naver.com',
     url: 'https://cdn.expcloud.co/life/uploads/2020/04/27135731/Fee-gentry-hed-shot-1.jpg',
   },
+  {
+    userId: '2',
+    username: 'ellie',
+    password: '$2b$10$cn6xwcHQEmmk1Zx1ip7dG.tFtqx4bNtirZbVa9NckOywzkgYSDQNa', //test123
+    name: 'Ellie',
+    email: 'ellie@naver.com',
+    url: 'https://cdn.pixabay.com/photo/2018/01/21/14/16/woman-3096664__340.jpg',
+  },
 ];
 
 export async function findUser(username) {
