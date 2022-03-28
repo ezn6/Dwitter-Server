@@ -45,3 +45,17 @@ export function getSocketIO() {
   }
   return socket.io; //Socket class안에 있는 io를 전달한다
 }
+
+//EX
+// const server = app.listen(config.host.port);
+// initSocket(server);
+// const soketIO = new Server(server, {
+//   cors: {
+//     origin: '*',
+//   },
+// });
+
+// soketIO.on('connection', (socket) => {
+//   console.log('Client is here!');
+//   soketIO.emit('dwitter', 'hello!');
+// });
