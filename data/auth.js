@@ -27,7 +27,10 @@ export async function findUser(username) {
 export async function findById(userId) {
   return db
     .execute('SELECT * FROM users WHERE id=?', [userId]) //
-    .then((result) => result[0][0]);
+    .then((result) => {
+      // console.log('@@@', result[0]);
+      return result[0][0];
+    });
 }
 
 export async function createUser(username, password, name, url, email) {

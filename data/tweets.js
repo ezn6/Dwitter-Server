@@ -1,71 +1,62 @@
 import * as userDB from '../data/auth.js';
+import { db } from '../db/database.js';
 
-let tweets = [
-  {
-    id: '1', //postId
-    text: '드림코더분들 화이팅!',
-    createdAt: new Date().toString(),
-    userId: '1',
-  },
-  {
-    id: '2',
-    text: '안뇽!',
-    createdAt: new Date().toString(),
-    userId: '1',
-  },
-  {
-    id: '3',
-    text: '아이스 아메리카노 🥃',
-    createdAt: new Date().toString(),
-    userId: '1',
-  },
-];
+// let tweets = [
+//   {
+//     id: '1', //postId
+//     text: '드림코더분들 화이팅!',
+//     createdAt: new Date().toString(),
+//     userId: '1',
+//   },
+//   {
+//     id: '2',
+//     text: '안뇽!',
+//     createdAt: new Date().toString(),
+//     userId: '1',
+//   },
+//   {
+//     id: '3',
+//     text: '아이스 아메리카노 🥃',
+//     createdAt: new Date().toString(),
+//     userId: '1',
+//   },
+// ];
+
+const SELECT_JOIN =
+  'SELECT tw.id, tw.text, tw.createdAt, tw.userId, us.username, us.name, us.url FROM tweets as tw JOIN users as us ON tw.userId = us.id';
+const ORDER_DESC = 'ORDER BY tw.createdAt DESC';
 
 export async function getAll() {
-  return Promise.all(
-    //Promise : Promise is a JavaScript object for asynchronous operation
-    //all : An array of Promises.
-    tweets.map(async (tweet) => {
-      const { username, name, url } = await userDB.findById(tweet.userId);
-      return { ...tweet, username, name, url }; //tweets에 username, name, url정보가 포함된
-    })
-  );
+  return db
+    .execute(`${SELECT_JOIN} ${ORDER_DESC}`) //
+    .then((result) => result[0]);
 }
 
 export async function getAllByUsername(username) {
-  return getAll().then((tweets) =>
-    tweets.filter((t) => t.username === username)
-  );
+  return db
+    .execute(`${SELECT_JOIN} WHERE us.username=? ${ORDER_DESC}`, [username]) //
+    .then((result) => result[0]);
 }
 
 export async function findById(id) {
   //해당 postId에 따른 트윗 글 한개만 보여짐
-
-  const found = tweets.find((t) => t.id === id);
-  if (!found) {
-    return null;
-  }
-  const { username, name, url } = await userDB.findById(found.userId);
-  return { ...found, username, name, url };
+  return db
+    .execute(`${SELECT_JOIN} WHERE tw.id=?`, [id]) //
+    .then((result) => result[0][0]);
 }
 
 export async function create(text, userId) {
-  const tweet = {
-    id: Date.now().toString(),
-    text,
-    createdAt: new Date(),
-    userId,
-  };
-  tweets = [tweet, ...tweets];
-  return findById(tweet.id); //만들고 나서 사용자에게는 url, name과같은 정보를 보여줘야하니까 findById함수로 리턴
+  return db
+    .execute('INSERT INTO tweets (text, userId) VALUES(?,?)', [text, userId]) //
+    .then((result) => findById(result[0].insertId)); //만들고 나서 사용자에게는 url, name과같은 정보를 보여줘야하니까 findById함수로 리턴
 }
 
 export async function update(id, text) {
-  const tweet = tweets.find((t) => t.id === id);
-  if (tweet) tweet.text = text;
-  return findById(tweet.id);
+  return db
+    .execute('UPDATE tweets t SET t.text = ? WHERE t.id = ?', [text, id]) //
+    .then(() => findById(id));
 }
 
 export async function remove(id) {
-  tweets = tweets.filter((t) => t.id !== id);
+  return db.execute('DELETE FROM tweets WHERE id = ?', [id]);
 }
