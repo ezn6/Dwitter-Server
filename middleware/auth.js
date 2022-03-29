@@ -27,7 +27,7 @@ export const isAuth = async (req, res, next) => {
       return res.status(401).json(AUTH_ERROR);
     }
 
-    req.userId = user.userId; //req에 객체성분 추가해주는것
+    req.userId = user.id; //req에 객체성분 추가해주는것
     req.token = token;
 
     next();

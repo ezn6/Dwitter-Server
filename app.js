@@ -29,7 +29,7 @@ app.use((error, req, res, next) => {
 });
 
 //어플리케이션이 실행되기 전에 db에 먼저 연결되는지 확인
-db.getConnection().then((connection) => console.log(connection));
+// db.getConnection().then((connection) => console.log(connection));
 
 const server = app.listen(config.host.port);
 initSocket(server);

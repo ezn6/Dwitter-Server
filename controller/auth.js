@@ -34,7 +34,7 @@ export async function signUp(req, res) {
     url,
     email
   );
-
+  // console.log('@@@', userId);
   const token = CreatJwtToken(userId);
 
   res.status(201).json({ username: username, token: token });
@@ -52,9 +52,10 @@ export async function login(req, res) {
   if (!isValidPassword) {
     return res.status(401).json({ message: 'Invalid user or password' });
   }
-  // console.log(`here : ${findUser.userId}`);
+
   //서버에 등록된 유효한 사용자라면 jwt 제공
-  const token = CreatJwtToken(findUser.userId);
+  // console.log(findUser.id);
+  const token = CreatJwtToken(findUser.id);
   // res.status(200).json({ username: `${username}`, jwt: `${token}` });
   res.status(200).json({ username: username, token: token });
 }
@@ -65,5 +66,5 @@ export async function me(req, res) {
   if (!user) {
     return res.status(404).json({ message: 'user not found' });
   }
-  res.status(200).json({ token: req.token, username: user.username });
+  res.status(200).json({ username: user.username, token: req.token });
 }
